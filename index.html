@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <title>Redirecting…</title>
+  </head>
+  <body>
+    <p>Redirecting…</p>
+    <script>
+      (async () => {
+        const res = await fetch("current.txt?ts=" + Date.now(), { cache: "no-store" });
+        const url = (await res.text()).trim();
+        if (!/^https:\/\//.test(url)) throw new Error("current.txt did not contain a valid https URL");
+        location.replace(url);
+      })().catch(err => {
+        document.body.innerHTML = "<pre>Redirect failed:\n" + err + "</pre>";
+      });
+    </script>
+  </body>
+</html>
