@@ -1,21 +1,23 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="robots" content="noindex" />
-    <title>Redirecting…</title>
-  </head>
-  <body>
-    <p>Redirecting…</p>
-    <script>
-      (async () => {
-        const res = await fetch("current.txt?ts=" + Date.now(), { cache: "no-store" });
-        const url = (await res.text()).trim();
-        if (!/^https:\/\//.test(url)) throw new Error("current.txt did not contain a valid https URL");
-        location.replace(url);
-      })().catch(err => {
-        document.body.innerHTML = "<pre>Redirect failed:\n" + err + "</pre>";
-      });
-    </script>
-  </body>
-</html>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Redirect</title>
+
+<script>
+	(async () => {
+		const txt = await fetch("current.txt?ts=" + Date.now(), {cache: "no-store"}).then(r => r.text());
+		const url = txt.trim();
+
+		if (!url) {
+			document.body.innerHTML = `
+      <h1>Server is sleeping 💤</h1>
+      <p>Come back tomorrow at 8:00 for more python fun!</p>
+	  <a href="https://www.youtube.com/watch?v=KZeIEiBrT_w">In the meantime, watch this video!</a>
+    `;
+			return;
+		}
+
+		if (!/^https:\/\//.test(url)) throw new Error("current.txt must contain an https:// URL");
+		location.replace(url);
+	})().catch(e => document.body.textContent = "Redirect failed: " + e.message);
+</script>
